@@ -1,5 +1,11 @@
 #! usr/bin/env ruby
 
+#Sudoku question file
+Inputfile=File.new "#{File.dirname(__FILE__)}\\sudoku.txt"
+
+#Sudoku solution file
+Solutionfile="#{File.dirname(__FILE__)}\\solution.txt"
+
 def grid_copy(arr)
     arr2=[]
     arr.each { |i| arr2 << i.clone }
@@ -27,20 +33,20 @@ def solve(grid, y=0, x=0)
                     while probab!=0
                         if (probab & 1)==1
                             copy_grid[i][j]=val
-                            result=solve(copy_grid, i, j+1)
-                            return result if result!=nil
+                            solve(copy_grid, i, j+1)
                         end
 
                         val+=1
                         probab=probab >> 1
                     end
 
-                    return nil
+                    return
                 end
             end
         }
     }
 
+    print_grid(copy_grid)
     return copy_grid
 end
 
@@ -75,7 +81,7 @@ end
 
 def init_grid
     grid=Array.new(9)
-    file=File.new "#{File.dirname(__FILE__)}\\sudoku.txt"
+    file=Inputfile
 
     0.upto(8) { |i|
         str=file.gets
@@ -83,11 +89,12 @@ def init_grid
     }
 
     file.close
+    File.delete(Solutionfile) if File.exist?(Solutionfile)
     return grid
 end
 
 def print_grid(grid)
-    file=File.new("#{File.dirname(__FILE__)}\\solution.txt", "w")
+    file=File.new(Solutionfile, "a")
     0.upto(8) { |i|
         0.upto(8) { |j|
             file.print "#{grid[i][j]} "
@@ -95,9 +102,8 @@ def print_grid(grid)
         file.puts ""
     }
 
+    file.puts ""
     file.close
 end
 
-grid=init_grid
-grid=solve(grid)
-print_grid(grid)
+solve(init_grid)
