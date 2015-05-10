@@ -31,13 +31,10 @@ def solve(grid, y=0, x=0)
                     val=0
 
                     while probab!=0
-                        if (probab & 1)==1
-                            copy_grid[i][j]=val
-                            solve(copy_grid, i, j+1)
-                        end
-
-                        val+=1
-                        probab=probab >> 1
+                        lsb = probab & -probab
+                        copy_grid[i][j] = Math.log2(lsb)
+                        solve(copy_grid, i, j+1)
+                        probab &= ~lsb
                     end
 
                     return
@@ -47,7 +44,6 @@ def solve(grid, y=0, x=0)
     }
 
     print_grid(copy_grid)
-    return copy_grid
 end
 
 def check_from_row(probab, grid, y, x)
